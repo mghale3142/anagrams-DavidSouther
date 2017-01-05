@@ -30,8 +30,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class AnagramDictionary {
 
@@ -41,6 +43,7 @@ public class AnagramDictionary {
     private Random random = new Random();
 
     private HashMap<String, ArrayList<String>> lettersToWord = new HashMap<>();
+    private List<String> words = new ArrayList<String>();
 
     public AnagramDictionary(InputStream wordListStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
@@ -50,22 +53,50 @@ public class AnagramDictionary {
             //
             //  Your code here
             //
+            String sorted = sortLetters(word);
+            if (!lettersToWord.containsKey(sorted)) {
+                lettersToWord.put(sorted, new ArrayList());
+            }
+            lettersToWord.get(sorted).add(word);
+            words.add(word);
         }
     }
 
+    /**
+     * Check if words are anagrams but not the same words
+     * @param word
+     * @param base
+     * @return boolean
+     */
     public boolean isGoodWord(String word, String base) {
-        //
-        // Your code here
-        //
-        return true;
+        if (word.toUpperCase().equals(base.toUpperCase())){
+            return false;
+        }
+        //if anagrams but not the same
+        return getAnagramsWithOneMoreLetter(base).contains(word);
     }
 
+
+    /**
+     * go through the list tracker and only get the ones that are the anagrams
+     * @param targetWord
+     * @return
+     */
     public List<String> getAnagrams(String targetWord) {
         ArrayList<String> result = new ArrayList<String>();
         //
         // Your code here
         //
-        return result;
+        String sorted = sortLetters(targetWord);
+        /*for (String word : words ) {
+            if (sortLetters(word).equals(sorted)) {
+                result.add(word);
+            }
+        }*/
+        if (!lettersToWord.containsKey(sorted)) {
+            return new ArrayList<>();
+        }
+        return lettersToWord.get(sorted);
     }
 
     @VisibleForTesting
@@ -73,16 +104,16 @@ public class AnagramDictionary {
         //
         // Your code here
         //
-        return true;
+        //sort both words
+        return sortLetters(first).equals(sortLetters(second));
     }
 
     @VisibleForTesting
     static String sortLetters(String input) {
         char[] chars = input.toCharArray();
-        //
-        // Your code here
-        //
-        return "";
+        Arrays.sort(chars);
+
+        return (new String(chars));
     }
 
     public List<String> getAnagramsWithOneMoreLetter(String word) {
@@ -90,6 +121,16 @@ public class AnagramDictionary {
         //
         // Your code here
         //
+        //
+        String sorted = sortLetters(word).toLowerCase();
+        String temp;
+        for(int i = 'a' ; i <= 'z'; i++ ) {
+            temp = sortLetters(sorted + (char)i);
+            result.addAll(getAnagrams(temp));
+
+        }
+
+
         return result;
     }
 
@@ -97,6 +138,29 @@ public class AnagramDictionary {
         //
         // Your code here
         //
-        return "stop";
+       /* random.setSeed(DEFAULT_WORD_LENGTH);
+        int randomLength = random.nextInt(MAX_WORD_LENGTH);
+        System.out.println(randomLength);
+        Set<String> iterator = lettersToWord.keySet();
+        String startWord = "stop";
+        for(String word : iterator) {
+            if (word.length() == randomLength) {
+                if (lettersToWord.get(word).size() >= MIN_NUM_ANAGRAMS) {
+                    startWord = lettersToWord.get(word).get(randomLength);
+                    break;
+                }
+            }
+        }
+8*/
+        List<String> anagrams = new ArrayList<>();
+        String word = "stop";
+        do {
+            word = words.get(Math.abs(random.nextInt())%words.size());
+            if (word.length() < DEFAULT_WORD_LENGTH || word.length() > MAX_WORD_LENGTH) {
+                continue;
+            }
+            anagrams = getAnagramsWithOneMoreLetter(word);
+        } while (anagrams.size() < MIN_NUM_ANAGRAMS);
+        return word;
     }
 }

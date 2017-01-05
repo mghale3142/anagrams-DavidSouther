@@ -16,30 +16,75 @@
 
 package com.google.engedu.anagrams;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 import android.text.TextUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 
 /**
  * Tests for AnagramDictionary
  */
 
-public class AnagramDictionaryTest {
+public class AnagramDictionaryTest{
+
+
+    private AnagramDictionary anagrams;
+
+    @Before
+    public void buildDictionary() throws Exception {
+        //we know the words so much better
+        InputStream inputStream = new ByteArrayInputStream((
+                "stop\npouts\ntypists\ntypo\ntypography\ntypos\n"
+        ).getBytes());
+        anagrams = new AnagramDictionary(inputStream);
+    }
+
+    @Test
+    public void getAnagrams() {
+        assertArrayEquals(
+                anagrams.getAnagrams("typo").toArray(),
+                // using built in stuff is much better, show off java skills
+                new String[]{"typo"}
+        );
+    }
+
+    @Test
+    public void getAnagramsWithOneMoreLetter() {
+        assertArrayEquals(
+                anagrams.getAnagramsWithOneMoreLetter("typo").toArray(),
+                // using built in stuff is much better, show off java skills
+                new String[]{"typos"}
+        );
+    }
     @Test
     public void testSortLetters() {
+
         assertEquals(AnagramDictionary.sortLetters("a"), "a");
+        assertEquals(AnagramDictionary.sortLetters("spot"), "opst");
+        assertEquals(AnagramDictionary.sortLetters("spot"), "post");
+
     }
 
     @Test
     public void testIsAnagram() {
+
         assertTrue(AnagramDictionary.isAnagram("a", "a"));
+        assertTrue(AnagramDictionary.isAnagram("stop", "pots"));
+        //make sure it fails
+        assertFalse(AnagramDictionary.isAnagram("stop", "start"));
+        // just make sure that one of them fails, but remove it later assertTrue(AnagramDictionary.isAnagram("stop", "start"));
     }
 
     @Test
     public void testIsGoodWord() {
        // TODO: This may need to be in AndroidTest
+
     }
+
 }

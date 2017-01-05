@@ -50,6 +50,7 @@ public class AnagramsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //generic code the first two lines.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anagrams);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -87,11 +88,14 @@ public class AnagramsActivity extends AppCompatActivity {
         }
         String color = "#cc0029";
         if (dictionary.isGoodWord(word, currentWord) && anagrams.contains(word)) {
+            //since already used
             anagrams.remove(word);
+            ///green
             color = "#00aa29";
         } else {
             word = "X " + word;
         }
+        //by embedding html, gets rich text effect without having to edit text manually.
         resultView.append(Html.fromHtml(String.format("<font color=%s>%s</font><BR>", color, word)));
         editText.setText("");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -121,15 +125,21 @@ public class AnagramsActivity extends AppCompatActivity {
     }
 
     public boolean defaultAction(View view) {
+        //trend to have all of their ids
         TextView gameStatus = (TextView) findViewById(R.id.gameStatusView);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         EditText editText = (EditText) findViewById(R.id.editText);
         TextView resultView = (TextView) findViewById(R.id.resultView);
         if (currentWord == null) {
             currentWord = dictionary.pickGoodStarterWord();
+            // lis of words that we know are valid
             anagrams = dictionary.getAnagramsWithOneMoreLetter(currentWord);
+            // load the html start message from anagramsActivity.java
+            // string.frma utility basically put a string here so basically replacing current word with its upper case.
             gameStatus.setText(Html.fromHtml(String.format(START_MESSAGE, currentWord.toUpperCase(), currentWord)));
+
             fab.setImageResource(android.R.drawable.ic_menu_help);
+            //reset the states to default values.
             fab.hide();
             resultView.setText("");
             editText.setText("");
